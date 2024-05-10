@@ -1,0 +1,54 @@
+
+import os
+import shutil
+
+#bugs killed
+#0 stopped working because bittorrent was actively leeching, had to clear those before the script would run again...that's curveball
+#1 source dir put to top\
+#2 source dir addded escape character
+#3 added count [bonus if changed to while true and then add logic to only move if size of file is x>50mb [ie is a video and not text]
+
+source_dir = "D:\\film\\abc"
+destination_dir = "D:\\f2"
+def move_largest_file(source_dir, destination_dir):
+    count=0
+
+    while count <20:
+        count+=1
+        # Ensure both directories exist
+        if not os.path.isdir(source_dir) or not os.path.isdir(destination_dir):
+            print("Source or destination directory does not exist.")
+            return
+    
+        # List to store file paths and sizes
+        files_info = []
+    
+        # Recursively search for files in source directory and its subdirectories
+        for root, _, files in os.walk(source_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                # Check if it's a file (not a directory)
+                if os.path.isfile(file_path):
+                    files_info.append((file_path, os.path.getsize(file_path)))
+    
+        # Check if there are any files in the source directory
+        if not files_info:
+            print("No files found in the source directory.")
+            return
+    
+        # Find the largest file
+        largest_file_path, _ = max(files_info, key=lambda x: x[1])
+        largest_file_name = os.path.basename(largest_file_path)
+    
+        # Move the largest file to the destination directory
+        destination_file_path = os.path.join(destination_dir, largest_file_name)
+    
+        try:
+            shutil.move(largest_file_path, destination_file_path)
+            print(f"Moved '{largest_file_name}' to '{destination_dir}'.")
+        except Exception as e:
+            print(f"Error moving file: {e}")
+
+# Example usage:
+
+move_largest_file(source_dir, destination_dir)
